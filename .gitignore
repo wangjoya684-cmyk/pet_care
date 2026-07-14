@@ -1,0 +1,33 @@
+# Codex / agent local metadata
+.agents/
+.codex/
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+.cache/
+tmp/
+temp/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Dependency and generated output directories
+node_modules/
+dist/
+coverage/
