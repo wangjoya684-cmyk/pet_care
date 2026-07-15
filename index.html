@@ -585,8 +585,6 @@
     let currentReview = 0;
     let reviewTimer = null;
     let reviewTouchStartX = null;
-    let reviewHovered = false;
-    let reviewFocused = false;
 
     function stopReviewAutoplay() {
       if (reviewTimer !== null) {
@@ -596,7 +594,7 @@
     }
 
     function canReviewAutoplay() {
-      return !reduceMotionQuery.matches && !reviewHovered && !reviewFocused && !document.hidden;
+      return !reduceMotionQuery.matches && !document.hidden;
     }
 
     function startReviewAutoplay() {
@@ -648,28 +646,6 @@
       if (event.key === 'ArrowRight') {
         event.preventDefault();
         showReview(currentReview + 1, true);
-      }
-    });
-
-    reviewCarousel.addEventListener('mouseenter', () => {
-      reviewHovered = true;
-      stopReviewAutoplay();
-    });
-
-    reviewCarousel.addEventListener('mouseleave', () => {
-      reviewHovered = false;
-      startReviewAutoplay();
-    });
-
-    reviewCarousel.addEventListener('focusin', () => {
-      reviewFocused = true;
-      stopReviewAutoplay();
-    });
-
-    reviewCarousel.addEventListener('focusout', (event) => {
-      if (!reviewCarousel.contains(event.relatedTarget)) {
-        reviewFocused = false;
-        startReviewAutoplay();
       }
     });
 
