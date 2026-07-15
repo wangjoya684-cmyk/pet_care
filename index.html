@@ -533,7 +533,8 @@
                 <div class="field"><label for="phone">手机号码 *</label><input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="11 位手机号码" autocomplete="tel" required></div>
                 <div class="field"><label for="petType">宠物类型 *</label><select id="petType" name="petType" required><option value="">请选择</option><option value="dog">狗狗</option><option value="cat">猫咪</option><option value="other">其他小宠</option></select></div>
                 <div class="field"><label for="service">预约服务 *</label><select id="service" name="service" required><option value="">请选择</option><option value="basic">基础香香浴</option><option value="care">精致焕新洗护</option><option value="spa">植萃舒缓 SPA</option><option value="unsure">还不确定，想听建议</option></select></div>
-                <div class="field full"><label for="date">期望到店日期 *</label><input id="date" name="date" type="date" required></div>
+                <div class="field"><label for="date">期望到店日期 *</label><input id="date" name="date" type="date" required></div>
+                <div class="field"><label for="time">期望到店时间 *</label><input id="time" name="time" type="time" value="09:00" required></div>
                 <div class="field full">
                   <label for="notes">备注（选填）</label>
                   <textarea id="notes" name="notes" maxlength="200" aria-describedby="notes-count" placeholder="例如：怕吹风、容易紧张、皮肤敏感或有特殊造型需求"></textarea>
@@ -568,6 +569,7 @@
     const form = document.querySelector('#booking-form');
     const phoneInput = document.querySelector('#phone');
     const dateInput = document.querySelector('#date');
+    const timeInput = document.querySelector('#time');
     const formStatus = document.querySelector('#form-status');
     const notesInput = document.querySelector('#notes');
     const notesCount = document.querySelector('#notes-count');
@@ -716,11 +718,23 @@
       return `${year}-${month}-${day}`;
     }
 
+    function getTomorrowMorningDateString() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return getLocalDateString(tomorrow);
+    }
+
+    function setDefaultAppointmentTime() {
+      dateInput.value = getTomorrowMorningDateString();
+      timeInput.value = '09:00';
+    }
+
     function validatePhone(value) {
       return /^1[3-9]\d{9}$/.test(value.trim());
     }
 
     dateInput.min = getLocalDateString();
+    setDefaultAppointmentTime();
 
     phoneInput.addEventListener('input', () => {
       phoneInput.setCustomValidity('');
@@ -729,6 +743,11 @@
 
     dateInput.addEventListener('input', () => {
       dateInput.setCustomValidity('');
+      formStatus.classList.remove('visible');
+    });
+
+    timeInput.addEventListener('input', () => {
+      timeInput.setCustomValidity('');
       formStatus.classList.remove('visible');
     });
 
@@ -744,6 +763,10 @@
         dateInput.value && dateInput.value < dateInput.min ? '请选择今天或之后的日期' : ''
       );
 
+      timeInput.setCustomValidity(
+        timeInput.value ? '' : '请选择到店时间'
+      );
+
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -753,6 +776,7 @@
       form.reset();
       updateNotesCount();
       dateInput.min = getLocalDateString();
+      setDefaultAppointmentTime();
       formStatus.textContent = `${ownerName || '你好'}，预约信息已收到！我们会尽快与你确认时间。`;
       formStatus.classList.add('visible');
       formStatus.focus();
