@@ -281,7 +281,7 @@
     .field { display: grid; gap: 7px; }
     .field.full { grid-column: 1 / -1; }
     label { font-size: 13px; font-weight: 800; }
-    input, select {
+    input, select, textarea {
       width: 100%;
       min-height: 50px;
       padding: 0 15px;
@@ -292,8 +292,10 @@
       outline: none;
       transition: border .2s ease, box-shadow .2s ease;
     }
-    input:focus, select:focus { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(237,138,88,.13); }
-    input::placeholder { color: #afa39a; }
+    textarea { min-height: 90px; padding: 14px 15px; line-height: 1.6; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(237,138,88,.13); }
+    input::placeholder, textarea::placeholder { color: #afa39a; }
+    .field-meta { margin: -2px 2px 0; color: var(--muted); text-align: right; font-size: 11px; }
     .booking-form-wrap .button { width: 100%; margin-top: 24px; }
     .privacy { margin: 17px 0 0; color: var(--muted); text-align: center; font-size: 11px; }
     .form-status { display: none; margin: 19px 0 0; padding: 13px 16px; color: #406237; background: var(--sage-soft); border: 1px solid #b6c8a8; border-radius: 13px; font-size: 13px; font-weight: 800; text-align: center; }
@@ -533,6 +535,11 @@
                 <div class="field"><label for="petType">毛孩子类型 *</label><select id="petType" name="petType" required><option value="">请选择</option><option value="dog">狗狗</option><option value="cat">猫咪</option><option value="other">其他小宠</option></select></div>
                 <div class="field"><label for="service">想预约的服务 *</label><select id="service" name="service" required><option value="">请选择</option><option value="basic">基础香香浴</option><option value="care">精致焕新洗护</option><option value="spa">植萃舒缓 SPA</option><option value="unsure">还不确定，想听建议</option></select></div>
                 <div class="field full"><label for="date">期望到店日期 *</label><input id="date" name="date" type="date" required></div>
+                <div class="field full">
+                  <label for="notes">备注（选填）</label>
+                  <textarea id="notes" name="notes" maxlength="200" aria-describedby="notes-count" placeholder="例如：怕吹风、容易紧张、皮肤敏感或有特殊造型需求"></textarea>
+                  <p class="field-meta" id="notes-count">0 / 200</p>
+                </div>
               </div>
               <button class="button" type="submit">提交预约&nbsp; 🐾</button>
               <p class="privacy">🔒 信息仅用于本次预约联系，不会保存或用于其他用途。</p>
@@ -563,6 +570,8 @@
     const phoneInput = document.querySelector('#phone');
     const dateInput = document.querySelector('#date');
     const formStatus = document.querySelector('#form-status');
+    const notesInput = document.querySelector('#notes');
+    const notesCount = document.querySelector('#notes-count');
     const reviewCarousel = document.querySelector('.review-carousel');
     const reviewTrack = document.querySelector('.review-track');
     const reviewCards = [...document.querySelectorAll('.review-card')];
@@ -695,6 +704,12 @@
     showReview(0);
     startReviewAutoplay();
 
+    function updateNotesCount() {
+      notesCount.textContent = `${notesInput.value.length} / 200`;
+    }
+
+    notesInput.addEventListener('input', updateNotesCount);
+
     function getLocalDateString(date = new Date()) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -737,6 +752,7 @@
 
       const ownerName = document.querySelector('#name').value.trim();
       form.reset();
+      updateNotesCount();
       dateInput.min = getLocalDateString();
       formStatus.textContent = `${ownerName || '你好'}，预约信息已收到！我们会尽快与你确认时间。`;
       formStatus.classList.add('visible');
